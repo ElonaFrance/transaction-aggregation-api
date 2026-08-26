@@ -1,0 +1,1 @@
+namespace TransactionAggregationApi.Application.Domain.Queries;
