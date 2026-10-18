@@ -63,7 +63,11 @@ try
     app.UseAuthorization();
     app.MapControllers();
 
-    app.MapHealthChecks("/health/liveness");
+    // Liveness only reports that the process is up; MySQL is checked by readiness.
+    app.MapHealthChecks("/health/liveness", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
     app.MapHealthChecks("/health/readiness", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
     {
         Predicate = check => check.Tags.Contains("ready")

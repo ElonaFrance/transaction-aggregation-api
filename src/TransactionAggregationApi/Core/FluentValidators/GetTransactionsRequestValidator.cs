@@ -15,5 +15,11 @@ public class GetTransactionsRequestValidator : AbstractValidator<GetTransactions
             .WithMessage("MaxAmount must be greater than or equal to MinAmount.");
         RuleFor(x => x).Must(x => !x.FromDate.HasValue || !x.ToDate.HasValue || x.ToDate >= x.FromDate)
             .WithMessage("ToDate must be after FromDate.");
+        RuleFor(x => x.SortBy)
+            .Must(v => v.Equals("TransactionDate", StringComparison.OrdinalIgnoreCase) || v.Equals("Amount", StringComparison.OrdinalIgnoreCase))
+            .WithMessage("SortBy must be 'TransactionDate' or 'Amount'.");
+        RuleFor(x => x.SortOrder)
+            .Must(v => v.Equals("ASC", StringComparison.OrdinalIgnoreCase) || v.Equals("DESC", StringComparison.OrdinalIgnoreCase))
+            .WithMessage("SortOrder must be 'ASC' or 'DESC'.");
     }
 }

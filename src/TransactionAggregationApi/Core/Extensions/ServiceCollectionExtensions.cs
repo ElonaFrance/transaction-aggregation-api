@@ -1,5 +1,6 @@
 using System.Text;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TransactionAggregationApi.Application.Repositories;
@@ -48,6 +49,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddFluentValidators(this IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Scoped);
+        // Runs the validators against action parameters; [ApiController] then returns 400 on failure.
+        services.AddFluentValidationAutoValidation();
         return services;
     }
 }

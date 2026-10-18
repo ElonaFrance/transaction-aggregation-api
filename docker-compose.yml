@@ -14,7 +14,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ../transaction-processor/database/01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
-      - ../transaction-processor/database/02_stored_procedures.sql:/docker-entrypoint-initdb.d/02_stored_procedures.sql
+      - ../transaction-processor/database/02_stored_procedures-1.sql:/docker-entrypoint-initdb.d/02_stored_procedures.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "txuser", "-ptxpassword"]
       interval: 10s
@@ -67,7 +67,11 @@ services:
           --brokers redpanda:9092 \
           --partitions 3 \
           --replicas 1 || true
-        echo "Kafka topic created."
+        rpk topic create transaction-events-dlq \
+          --brokers redpanda:9092 \
+          --partitions 1 \
+          --replicas 1 || true
+        echo "Kafka topics created."
     networks:
       - transaction-net
 
@@ -108,7 +112,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__Database=Server=mysql;Port=3306;Database=transaction_db;User=txuser;Password=txpassword;Pooling=true;MinimumPoolSize=1;MaximumPoolSize=30;ConnectionTimeout=15;
-      - Jwt__Secret=TransactionAggregationApi-SuperSecretKey-2024-DoNotUseInProduction
+      - Jwt__Key=TransactionAggregationApi-SuperSecretKey-2024-DoNotUseInProduction
       - Jwt__Issuer=transaction-aggregation-api
       - Jwt__Audience=transaction-aggregation-clients
     ports:

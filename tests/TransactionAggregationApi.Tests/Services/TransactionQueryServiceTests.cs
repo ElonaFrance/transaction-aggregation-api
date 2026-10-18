@@ -1,5 +1,7 @@
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using NSubstitute;
+using Xunit;
 using TransactionAggregationApi.Application.Domain.Entities;
 using TransactionAggregationApi.Application.Domain.Requests;
 using TransactionAggregationApi.Application.Repositories.Contracts;
@@ -10,7 +12,13 @@ namespace TransactionAggregationApi.Tests.Services;
 public class TransactionQueryServiceTests
 {
     private readonly ITransactionRepository _repository = Substitute.For<ITransactionRepository>();
-    private readonly KafkaProducerService _producer = Substitute.For<KafkaProducerService>();
+    // KafkaProducerService is a concrete class NSubstitute can't proxy; these tests never produce,
+    // and building the client does not connect to a broker.
+    private readonly KafkaProducerService _producer = new(
+        new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?> { ["Kafka:BootstrapServers"] = "localhost:9092" })
+            .Build(),
+        Substitute.For<Microsoft.Extensions.Logging.ILogger<KafkaProducerService>>());
     private readonly Microsoft.Extensions.Logging.ILogger<TransactionQueryService> _logger =
         Substitute.For<Microsoft.Extensions.Logging.ILogger<TransactionQueryService>>();
 

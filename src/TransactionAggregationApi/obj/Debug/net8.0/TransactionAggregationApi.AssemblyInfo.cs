@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("transaction-aggregation-api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fcbb81f55860cddce667d29d0d2a1853b4c9b6c5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ef24409de98544487cf9d1e4385593825a980401")]
 [assembly: System.Reflection.AssemblyProductAttribute("transaction-aggregation-api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("transaction-aggregation-api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

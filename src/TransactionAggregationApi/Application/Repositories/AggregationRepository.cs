@@ -13,57 +13,57 @@ public class AggregationRepository : IAggregationRepository
 
     public AggregationRepository(DapperService dapperService) => _dapperService = dapperService;
 
-    public async Task<AggregationEntity?> FetchSummaryAsync(CancellationToken cancellationToken = default)
+    public async Task<AggregationSummaryEntity?> FetchSummaryAsync(CancellationToken cancellationToken = default)
     {
+        // usp_FetchAggregationSummary takes no parameters.
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryFirstOrDefaultAsync<AggregationEntity>(
+        return await connection.QueryFirstOrDefaultAsync<AggregationSummaryEntity>(
             AppConstants.StoredProcedures.FetchAggregationSummary,
-            new { Payload = "{}" },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 
-    public async Task<AggregationEntity?> FetchClientAggregationAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<ClientAggregationEntity?> FetchClientAggregationAsync(string clientId, CancellationToken cancellationToken = default)
     {
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryFirstOrDefaultAsync<AggregationEntity>(
+        return await connection.QueryFirstOrDefaultAsync<ClientAggregationEntity>(
             AppConstants.StoredProcedures.FetchClientAggregation,
             new { Payload = JsonSerializer.Serialize(new { ClientId = clientId }) },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<dynamic>> FetchClientCategoryBreakdownAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CategoryBreakdownEntity>> FetchClientCategoryBreakdownAsync(string clientId, CancellationToken cancellationToken = default)
     {
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryAsync(
+        return await connection.QueryAsync<CategoryBreakdownEntity>(
             AppConstants.StoredProcedures.FetchClientAggregationByCategory,
             new { Payload = JsonSerializer.Serialize(new { ClientId = clientId }) },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<dynamic>> FetchClientSourceBreakdownAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<SourceBreakdownEntity>> FetchClientSourceBreakdownAsync(string clientId, CancellationToken cancellationToken = default)
     {
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryAsync(
+        return await connection.QueryAsync<SourceBreakdownEntity>(
             AppConstants.StoredProcedures.FetchClientAggregationBySource,
             new { Payload = JsonSerializer.Serialize(new { ClientId = clientId }) },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<AggregationEntity>> FetchClientMonthlyAsync(string clientId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<MonthlyAggregationEntity>> FetchClientMonthlyAsync(string clientId, CancellationToken cancellationToken = default)
     {
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryAsync<AggregationEntity>(
+        return await connection.QueryAsync<MonthlyAggregationEntity>(
             AppConstants.StoredProcedures.FetchClientMonthlyAggregation,
             new { Payload = JsonSerializer.Serialize(new { ClientId = clientId }) },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 
-    public async Task<IEnumerable<dynamic>> FetchTopSpendersAsync(int top, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<TopSpenderEntity>> FetchTopSpendersAsync(int top, CancellationToken cancellationToken = default)
     {
         using var connection = _dapperService.CreateConnection();
-        return await connection.QueryAsync(
+        return await connection.QueryAsync<TopSpenderEntity>(
             AppConstants.StoredProcedures.FetchTopSpenders,
-            new { Payload = JsonSerializer.Serialize(new { Top = top }) },
+            new { Payload = JsonSerializer.Serialize(new { TopN = top }) },
             commandType: System.Data.CommandType.StoredProcedure);
     }
 }

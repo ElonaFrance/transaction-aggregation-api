@@ -4,10 +4,10 @@ namespace TransactionAggregationApi.Application.Repositories.Contracts;
 
 public interface IAggregationRepository
 {
-    Task<AggregationEntity?> FetchSummaryAsync(CancellationToken cancellationToken = default);
-    Task<AggregationEntity?> FetchClientAggregationAsync(string clientId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<dynamic>> FetchClientCategoryBreakdownAsync(string clientId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<dynamic>> FetchClientSourceBreakdownAsync(string clientId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<AggregationEntity>> FetchClientMonthlyAsync(string clientId, CancellationToken cancellationToken = default);
-    Task<IEnumerable<dynamic>> FetchTopSpendersAsync(int top, CancellationToken cancellationToken = default);
+    Task<AggregationSummaryEntity?> FetchSummaryAsync(CancellationToken cancellationToken = default);
+    Task<ClientAggregationEntity?> FetchClientAggregationAsync(string clientId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<CategoryBreakdownEntity>> FetchClientCategoryBreakdownAsync(string clientId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<SourceBreakdownEntity>> FetchClientSourceBreakdownAsync(string clientId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<MonthlyAggregationEntity>> FetchClientMonthlyAsync(string clientId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<TopSpenderEntity>> FetchTopSpendersAsync(int top, CancellationToken cancellationToken = default);
 }

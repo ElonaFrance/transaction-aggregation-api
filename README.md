@@ -64,7 +64,7 @@ Swagger UI: http://localhost:8081/swagger
 # 1. Start MySQL and Redpanda (or point to existing instances)
 # 2. Apply database schema
 mysql -u root -p < ../transaction-processor/database/01_schema.sql
-mysql -u root -p transaction_db < ../transaction-processor/database/02_stored_procedures.sql
+mysql -u root -p transaction_db < ../transaction-processor/database/02_stored_procedures-1.sql
 
 # 3. Start the API
 cd src/TransactionAggregationApi
@@ -108,7 +108,7 @@ Pass it as: `Authorization: Bearer <token>`
 | `GET` | `/api/v1/transactions/client/{clientId}` | Get transactions for a client |
 
 **Query parameters for list endpoints:**
-`clientId`, `sourceType`, `category`, `transactionType`, `minAmount`, `maxAmount`, `fromDate`, `toDate`, `page`, `pageSize`, `sortBy`, `sortDirection`
+`clientId`, `sourceType`, `categoryId`, `transactionType`, `minAmount`, `maxAmount`, `fromDate`, `toDate`, `page`, `pageSize`, `sortBy` (`TransactionDate` or `Amount`), `sortOrder` (`ASC` or `DESC`)
 
 ### Aggregations
 
@@ -125,7 +125,7 @@ Pass it as: `Authorization: Bearer <token>`
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/api/v1/categories` | List all 15 categories |
+| `GET` | `/api/v1/categories` | List all 16 categories |
 | `GET` | `/api/v1/categories/{categoryId}/transactions` | Transactions in a category |
 
 ### Health

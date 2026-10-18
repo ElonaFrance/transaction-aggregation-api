@@ -19,7 +19,10 @@ public class AggregationQueryService : IAggregationQueryService
         {
             TotalDebit = entity.TotalDebit,
             TotalCredit = entity.TotalCredit,
-            TotalTransactions = entity.TransactionCount
+            TotalTransactions = entity.TotalTransactionCount,
+            UniqueClients = entity.UniqueClientCount,
+            TopCategory = entity.TopCategory ?? string.Empty,
+            TopSource = entity.TopSource ?? string.Empty
         };
     }
 
@@ -44,10 +47,10 @@ public class AggregationQueryService : IAggregationQueryService
 
         var breakdown = rows.Select(r => new CategoryBreakdownItem
         {
-            CategoryId = (int)(r.CategoryId ?? 0),
-            CategoryName = (string)(r.CategoryName ?? "Unknown"),
-            TotalAmount = (decimal)(r.TotalAmount ?? 0m),
-            TransactionCount = (int)(r.TransactionCount ?? 0)
+            CategoryId = r.CategoryId,
+            CategoryName = r.CategoryName,
+            TotalAmount = r.TotalAmount,
+            TransactionCount = r.TransactionCount
         }).ToList();
 
         return new CategoryBreakdownResponse { ClientId = clientId, Breakdown = breakdown };
@@ -59,10 +62,10 @@ public class AggregationQueryService : IAggregationQueryService
 
         var breakdown = rows.Select(r => new SourceBreakdownItem
         {
-            SourceType = (string)(r.SourceType ?? "Unknown"),
-            TotalDebit = (decimal)(r.TotalDebit ?? 0m),
-            TotalCredit = (decimal)(r.TotalCredit ?? 0m),
-            TransactionCount = (int)(r.TransactionCount ?? 0)
+            SourceType = r.SourceType,
+            TotalDebit = r.TotalDebit,
+            TotalCredit = r.TotalCredit,
+            TransactionCount = r.TransactionCount
         }).ToList();
 
         return new SourceBreakdownResponse { ClientId = clientId, Breakdown = breakdown };
@@ -74,7 +77,7 @@ public class AggregationQueryService : IAggregationQueryService
 
         var monthly = entities.Select(e => new MonthlyAggregationItem
         {
-            PeriodKey = e.PeriodKey,
+            PeriodKey = e.Period,
             TotalDebit = e.TotalDebit,
             TotalCredit = e.TotalCredit,
             TransactionCount = e.TransactionCount
@@ -87,12 +90,12 @@ public class AggregationQueryService : IAggregationQueryService
     {
         var rows = await _repository.FetchTopSpendersAsync(top, cancellationToken);
 
-        return rows.Select((r, i) => new TopSpenderResponse
+        return rows.Select(r => new TopSpenderResponse
         {
-            ClientId = (string)(r.ClientId ?? ""),
-            TotalDebit = (decimal)(r.TotalDebit ?? 0m),
-            TransactionCount = (int)(r.TransactionCount ?? 0),
-            Rank = i + 1
+            ClientId = r.ClientId,
+            TotalDebit = r.TotalSpend,
+            TransactionCount = r.TransactionCount,
+            Rank = r.Rank
         }).ToList();
     }
 }

@@ -41,5 +41,10 @@ public class AggregationsController : ControllerBase
 
     [HttpGet("top-spenders")]
     public async Task<IActionResult> GetTopSpenders([FromQuery] int top = 10, CancellationToken cancellationToken = default)
-        => Ok(await _mediator.Send(new GetTopSpendersQuery(new Domain.Requests.GetTopSpendersRequest { TopN = top }), cancellationToken));
+    {
+        if (top is < 1 or > 100)
+            return BadRequest(Domain.Responses.ApiResponse<object>.Fail("top must be between 1 and 100."));
+
+        return Ok(await _mediator.Send(new GetTopSpendersQuery(new Domain.Requests.GetTopSpendersRequest { TopN = top }), cancellationToken));
+    }
 }

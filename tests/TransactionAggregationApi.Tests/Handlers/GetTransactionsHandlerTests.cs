@@ -1,5 +1,6 @@
 using FluentAssertions;
 using NSubstitute;
+using Xunit;
 using TransactionAggregationApi.Application.Domain.Queries;
 using TransactionAggregationApi.Application.Domain.Requests;
 using TransactionAggregationApi.Application.Domain.Responses;
@@ -17,12 +18,15 @@ public class GetTransactionsHandlerTests
     {
         var request = new GetTransactionsRequest();
         var expected = new PagedTransactionResponse { TotalCount = 5, Page = 1, PageSize = 20 };
-        _service.GetTransactionsAsync(request).Returns(expected);
+        _service.GetTransactionsAsync(request, Arg.Any<CancellationToken>()).Returns(expected);
 
-        var handler = new GetTransactionsHandler(_service);
+        var handler = new GetTransactionsQueryHandler(_service);
         var result = await handler.Handle(new GetTransactionsQuery(request), CancellationToken.None);
 
-        result.Should().BeEquivalentTo(expected);
-        await _service.Received(1).GetTransactionsAsync(request);
+        result.Success.Should().BeTrue();
+        result.TotalCount.Should().Be(5);
+        result.Page.Should().Be(1);
+        result.PageSize.Should().Be(20);
+        await _service.Received(1).GetTransactionsAsync(request, Arg.Any<CancellationToken>());
     }
 }

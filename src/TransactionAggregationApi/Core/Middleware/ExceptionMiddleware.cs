@@ -42,7 +42,10 @@ public class ExceptionMiddleware
         {
             status = context.Response.StatusCode,
             error = ex.GetType().Name,
-            message = ex.Message,
+            // Don't leak internal details (SQL, connection strings) on unexpected errors.
+            message = context.Response.StatusCode == (int)HttpStatusCode.InternalServerError
+                ? "An unexpected error occurred. Please try again later."
+                : ex.Message,
             traceId = context.TraceIdentifier
         });
 
